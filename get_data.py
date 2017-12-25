@@ -8,6 +8,18 @@ from dateutil.parser import parse
 import collections
 
 def get_songs(userID, playlistID, sp):
+    """ Gets ids and songs for a specific playlist
+
+    Args:
+        userID: spotify URI code for owner
+        playlistID: spotify URI code for playlist
+        sp = Spotify credentials object
+
+    Returns:
+        ids: spotify uri code for songs
+        songs: list of song names
+    """
+
     results = sp.user_playlist_tracks(userID, playlistID)
     songs = results['items']
     ids = []
@@ -21,6 +33,17 @@ def get_songs(userID, playlistID, sp):
     return ids, songs
 
 def get_audio_features(ids, songs, sp):
+    """ Gets the audio features for a set of songs
+
+    Args:
+        ids: spotify uri code for songs
+        songs: list of song names
+        sp = Spotify credentials object
+
+    Returns:
+        df: pandas data frame of audio features for the list of songs
+    """
+
     index = 0
     length_feature = []
     popularity_feature = []
@@ -61,6 +84,18 @@ def get_audio_features(ids, songs, sp):
 
 
 def preprocess_data(like, dislike):
+    """ Adds labels and combines the selected like and disliked songs
+        into one consolidated dataset.
+
+    Args:
+        like: dataframe of audio features for liked songs
+        dislike: dataframe of audio features for disliked songs
+
+    Returns:
+        complete_data: pandas data frame of the full dataset combining 
+                        liked and disliked songs with labels
+    """
+
     like.loc[like['explicit'] == True, 'explicit'] = 1
     like.loc[like['explicit'] == False, 'explicit'] = 0
     dislike.loc[dislike['explicit'] == True, 'explicit'] = 1
@@ -75,6 +110,18 @@ def preprocess_data(like, dislike):
 
 
 def get_playlist_ID(userID, sp):
+    """ Gets the playlist ID's for liked and disliked songs based on user input
+
+    Args:
+        userID: spotify URI code for owner
+        sp = Spotify credentials object
+
+    Returns:
+        like: list of selected songs that user LIKES
+        dislike: list of selected songs that user DISLKES
+        playlist_map[int(num)]: selected song to make predictions on
+    """
+
     playlists = sp.user_playlists(userID)
     playlist_map = collections.defaultdict(str)
     print('All of your playlists: \n')

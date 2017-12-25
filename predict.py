@@ -16,6 +16,7 @@ def main(userID):
     client_credentials_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+    #Setup Spotify Authentication Protocol
     scope = 'playlist-read-private'
     username = userID
     try:
@@ -27,7 +28,7 @@ def main(userID):
     	sp = spotipy.Spotify(auth=token)
     	sp.trace = False
 	
-	#Get IDs for selected playlists (LIKE and DISLIKE)
+	#Get Consolidated Dataset for selected like and disliked songs
     like, dislike, analyze = get_playlist_ID(userID, sp)
     like_final = pd.DataFrame()
     dislike_final = pd.DataFrame()
@@ -48,17 +49,17 @@ def main(userID):
 
     #Preprocess data to get a "target" column
     complete_data = preprocess_data(like_final, dislike_final)
+
+    #Seperate features into features and labels dataset
     X, y = separate_features(complete_data)
+
+    #Split data into training and test dataset
     X_train, X_test, y_train, y_test = split_data(X, y)
 
+    #Reshape dimensions of labels (y)
     y_train = np.ravel(y_train)
     y_test = np.ravel(y_test)
-
-    print(len(like_final))
-    print(len(dislike_final))
-    print(X_train.shape)
-    print(X_test.shape)
-
+    
     rf_model(X_train, X_test, y_train, y_test)
 
 
