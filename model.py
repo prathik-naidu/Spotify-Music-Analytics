@@ -11,6 +11,7 @@ from sklearn.metrics import (accuracy_score, precision_score, recall_score,
 from sklearn.utils import resample
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
 
 def separate_features(complete_data):
 	X = complete_data[['energy', 'liveness', 'tempo', 'speechiness', 'acousticness', 
@@ -22,12 +23,19 @@ def separate_features(complete_data):
 
 	return X, y
 
+def split_data(features, target):
+	X_train, X_test, y_train, y_test = train_test_split(features, target, random_state=42)
+	return X_train, X_test, y_train, y_test
+
 def kNN_model(X_train, X_test, y_train, y_test):
 	knn = KNeighborsClassifier()
 	knn.fit(X_train, y_train)
 	y_pred_knn = knn.predict(X_test)
 	y_pred_prob_knn = knn.predict_proba(X_test)[:,1]
 	knn_roc = roc_auc_score(y_test, y_pred_prob_knn)
+
+	print(knn_roc)
+
 
 
 def logreg_model(X_train, X_test, y_train, y_test):
@@ -43,6 +51,8 @@ def rf_model(X_train, X_test, y_train, y_test):
 	y_pred_rf = rf.predict(X_test)
 	y_pred_prob_rf = rf.predict_proba(X_test)[:,1]
 	rf_roc = roc_auc_score(y_test, y_pred_prob_rf)
+
+	print(rf_roc)
 
 def mlp_model(X_train, X_test, y_train, y_test):
 	mlp = MLPClassifier()

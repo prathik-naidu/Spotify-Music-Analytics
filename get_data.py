@@ -8,7 +8,7 @@ from dateutil.parser import parse
 import collections
 
 def get_songs(userID, playlistID, sp):
-    results = sp.user_playlist_tracks('12165262567', '11Fo4ON0gWVQ56aPXgjOk3')
+    results = sp.user_playlist_tracks(userID, playlistID)
     songs = results['items']
     ids = []
     while results['next']:
@@ -20,18 +20,13 @@ def get_songs(userID, playlistID, sp):
 
     return ids, songs
 
-#Get Audio Features for a Playlist
 def get_audio_features(ids, songs, sp):
-    results = sp.user_playlist_tracks('12165262567', '11Fo4ON0gWVQ56aPXgjOk3')
     index = 0
     length_feature = []
     popularity_feature = []
     explicit_feature = []
     audio_features = []
 
-
-    #songs = results['items']
-    #print(songs[0]['added_at'])
     for i in songs:
         length_feature.append(i['track']['duration_ms'])
         popularity_feature.append(i['track']['popularity'])
@@ -62,15 +57,14 @@ def get_audio_features(ids, songs, sp):
     df = df.assign(popularity = popularity_feature)
     df = df.assign(explicit = explicit_feature)
 
-    writer = pd.ExcelWriter('/Users/Prathik/Desktop/output2.xlsx')
-    df.to_excel(writer, 'Sheet1')
+    return df
 
 
 def preprocess_data(like, dislike):
-    like.loc[like['explicit'] == "TRUE", 'explicit'] = 1
-    dislike.loc[dislike['explicit'] == "FALSE", 'explicit'] = 0
-    dislike.loc[dislike['explicit'] == "TRUE", 'explicit'] = 1
-    dislike.loc[dislike['explicit'] == "FALSE", 'explicit'] = 0
+    like.loc[like['explicit'] == True, 'explicit'] = 1
+    like.loc[like['explicit'] == False, 'explicit'] = 0
+    dislike.loc[dislike['explicit'] == True, 'explicit'] = 1
+    dislike.loc[dislike['explicit'] == False, 'explicit'] = 0
 
     like['target'] = 1
     dislike['target'] = 0
@@ -80,20 +74,19 @@ def preprocess_data(like, dislike):
     return complete_data
 
 
-#Get Playlist Code
 def get_playlist_ID(userID, sp):
     playlists = sp.user_playlists(userID)
     playlist_map = collections.defaultdict(str)
-
+    print('All of your playlists: \n')
     while playlists:
         for i, playlist in enumerate(playlists['items']):
             print("%3d %s" % (i + 1 + playlists['offset'], playlist['name']))
-            playlist_map[i + 1 + playlists['offset']] = playlist['name']
+            playlist_map[i + 1 + playlists['offset']] = playlist['id']
         if playlists['next']:
             playlists = sp.next(playlists)
         else:
             playlists = None
-            
+
     num = ""
     like = ""
     dislike = ""
@@ -101,37 +94,19 @@ def get_playlist_ID(userID, sp):
     while num == "":
         num = input('Choose a desired playlist to analyze by entering the corresponding number: ')
     while like == "":
-        like = input('Choose playlists that you enjoy listening to (enter each playlist number space separated): ')
+        like = input('Choose playlists that you LIKE (enter each playlist number space separated): ')
+        like = like.split(" ")
     while dislike == "":
-        dislike = input('Choose playlists that you do not enjoy (enter each playlist number space separated): ')
+        dislike = input('Choose playlists that you DISLIKE (enter each playlist number space separated): ')
+        dislike = dislike.split(" ")
 
     for i in range(len(like)):
-        like[i] = playlist_map[like[i]]
+        like[i] = playlist_map[int(like[i])]
 
     for i in range(len(dislike)):
-        dislike[i] = playlist_map[dislike[i]]
+        dislike[i] = playlist_map[int(dislike[i])]
 
     return like, dislike, playlist_map[int(num)]
-
-'''def main(userID, playlistID):
-    client_credentials_manager = SpotifyClientCredentials()
-    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
-    #print("Getting user playlist")
-    #get_user_playlist(username, sp)
-    #print("Getting playlist content")
-    #get_playlist_content(username, playlist, sp)
-    #print("Getting playlist audio features")
-    song_ids = get_songs(userID, playlistID, sp)
-    df_features = get_audio_features(song_ids)
-
-
-if __name__ == '__main__':
-    print 'Starting...'
-    parser = argparse.ArgumentParser(description='description')
-    parser.add_argument('--username', help='username')
-    parser.add_argument('--playlist', help='username')
-    args = parser.parse_args()
-    main('12165262567', '11Fo4ON0gWVQ56aPXgjOk3')'''
 
 
 
