@@ -16,7 +16,6 @@ def main(userID):
     client_credentials_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-
     scope = 'playlist-read-private'
     username = userID
     try:
@@ -27,8 +26,7 @@ def main(userID):
     if token:
     	sp = spotipy.Spotify(auth=token)
     	sp.trace = False
-
-    results = sp.user_playlist_tracks("sahana3599", "5Gih3kaCaA8yzruBILceI3")
+	
 	#Get IDs for selected playlists (LIKE and DISLIKE)
     like, dislike, analyze = get_playlist_ID(userID, sp)
     like_final = pd.DataFrame()
