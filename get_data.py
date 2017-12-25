@@ -5,6 +5,7 @@ import sys
 import pandas as pd
 from spotipy.oauth2 import SpotifyClientCredentials
 from dateutil.parser import parse
+import collections
 
 def get_songs(userID, playlistID, sp):
     results = sp.user_playlist_tracks('12165262567', '11Fo4ON0gWVQ56aPXgjOk3')
@@ -81,20 +82,35 @@ def preprocess_data(like, dislike):
 
 #Get Playlist Code
 def get_playlist_ID(userID, sp):
-    playlists = sp.user_playlists()
+    playlists = sp.user_playlists(userID)
     playlist_map = collections.defaultdict(str)
+
     while playlists:
         for i, playlist in enumerate(playlists['items']):
-            print("%3d %s %s" % (i + 1 + playlists['offset'], playlist['name']))
+            print("%3d %s" % (i + 1 + playlists['offset'], playlist['name']))
             playlist_map[i + 1 + playlists['offset']] = playlist['name']
         if playlists['next']:
             playlists = sp.next(playlists)
         else:
             playlists = None
+            
+    num = ""
+    like = ""
+    dislike = ""
+    
+    while num == "":
+        num = input('Choose a desired playlist to analyze by entering the corresponding number: ')
+    while like == "":
+        like = input('Choose playlists that you enjoy listening to (enter each playlist number space separated): ')
+    while dislike == "":
+        dislike = input('Choose playlists that you do not enjoy (enter each playlist number space separated): ')
 
-    num = input('Choose a desired playlist to analyze by entering the corresponding number: ')
-    like = input('Choose playlists that you enjoy listening to (enter each playlist number space separated): ')
-    dislike = input('Choose plyalists that you do not enjoy (enter each plyalist number space separated): ')
+    for i in range(len(like)):
+        like[i] = playlist_map[like[i]]
+
+    for i in range(len(dislike)):
+        dislike[i] = playlist_map[dislike[i]]
+
     return like, dislike, playlist_map[int(num)]
 
 '''def main(userID, playlistID):
