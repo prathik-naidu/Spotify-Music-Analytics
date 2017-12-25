@@ -12,10 +12,10 @@ Note: Currently working on developing an application so users do not have to run
 
 Necessary packages for running the tool:
 
-    * [Spotipy](https://github.com/plamere/spotipy)
-    * [pandas](https://pandas.pydata.org/)
-    * [Numpy/Scipy](https://www.scipy.org/scipylib/download.html)
-    * [sklearn](http://scikit-learn.org/stable/install.html)
+* [Spotipy](https://github.com/plamere/spotipy)
+* [pandas](https://pandas.pydata.org/)
+* [Numpy/Scipy](https://www.scipy.org/scipylib/download.html)
+* [sklearn](http://scikit-learn.org/stable/install.html)
 
 In order to run the tool locally, a spotify client authorization must be obtained. This can be done by registering the application locally through the [Spotify Developer](https://beta.developer.spotify.com/dashboard/login) account.
 
