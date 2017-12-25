@@ -11,7 +11,6 @@ import os
 from json.decoder import JSONDecodeError
 import collections
 
-##TODO GET USER ID OF A PLAYLIST
 
 def main(userID):
     client_credentials_manager = SpotifyClientCredentials()
@@ -29,17 +28,22 @@ def main(userID):
     	sp = spotipy.Spotify(auth=token)
     	sp.trace = False
 
-    #Get IDs for selected playlists (LIKE and DISLIKE)
+    results = sp.user_playlist_tracks("sahana3599", "5Gih3kaCaA8yzruBILceI3")
+	#Get IDs for selected playlists (LIKE and DISLIKE)
     like, dislike, analyze = get_playlist_ID(userID, sp)
     like_final = pd.DataFrame()
     dislike_final = pd.DataFrame()
 
-    for playlist in like:
+    for pair in like:
+    	playlist = pair[0]
+    	userID = pair[1]
     	like_ids, like_songs = get_songs(userID, playlist, sp)
     	like_audio_features = get_audio_features(like_ids, like_songs, sp)
     	like_final = pd.concat([like_final, like_audio_features], ignore_index = True)
 
-    for playlist in dislike:
+    for pair in dislike:
+    	playlist = pair[0]
+    	userID = pair[1]
     	dislike_ids, dislike_songs = get_songs(userID, playlist, sp)
     	dislike_audio_features = get_audio_features(dislike_ids, dislike_songs, sp)
     	dislike_final = pd.concat([dislike_final, dislike_audio_features], ignore_index = True)

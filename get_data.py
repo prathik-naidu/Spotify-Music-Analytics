@@ -81,7 +81,8 @@ def get_playlist_ID(userID, sp):
     while playlists:
         for i, playlist in enumerate(playlists['items']):
             print("%3d %s" % (i + 1 + playlists['offset'], playlist['name']))
-            playlist_map[i + 1 + playlists['offset']] = playlist['id']
+            owner_id = playlist['owner']['uri'].split(":")[2]
+            playlist_map[i + 1 + playlists['offset']] = [playlist['id'], owner_id]
         if playlists['next']:
             playlists = sp.next(playlists)
         else:
