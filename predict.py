@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from spotipy.oauth2 import SpotifyClientCredentials
 from get_data import get_audio_features, get_songs, get_playlist_ID, preprocess_data
-from model import separate_features, split_data, kNN_model, rf_model
+from model import separate_features, split_data, kNN_model, rf_model, logreg_model, mlp_model
 import argparse
 import spotipy.util as util
 import os
@@ -59,8 +59,16 @@ def main(userID):
     #Reshape dimensions of labels (y)
     y_train = np.ravel(y_train)
     y_test = np.ravel(y_test)
-    
+
+    print(len(like_final))
+    print(len(dislike_final))
+    print(X_train.shape)
+    print(X_test.shape)
+
     rf_model(X_train, X_test, y_train, y_test)
+    #kNN_model(X_train, X_test, y_train, y_test)
+    #logreg_model(X_train, X_test, y_train, y_test)
+    #mlp_model(X_train, X_test, y_train, y_test)
 
 
 

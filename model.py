@@ -70,6 +70,8 @@ def logreg_model(X_train, X_test, y_train, y_test):
 	y_pred_prob_logreg = logreg.predict_proba(X_test)[:,1]
 	logreg_roc = roc_auc_score(y_test, y_pred_prob_logreg)
 
+	print(logreg_roc)
+
 def rf_model(X_train, X_test, y_train, y_test):
 	""" 
 	Implements Random Forest algorithm
@@ -91,4 +93,6 @@ def mlp_model(X_train, X_test, y_train, y_test):
 	y_pred_mlp = mlp.predict(X_test)
 	y_pred_prob_mlp = mlp.predict_proba(X_test)[:,1]
 	mlp_roc = roc_auc_score(y_test, y_pred_prob_mlp)
+
+	print(mlp_roc)
 
