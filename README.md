@@ -27,3 +27,30 @@ export SPOTIPY_CLIENT_SECRET='***From Spotify Developer Portal***'
 export SPOTIPY_REDIRECT_URI='https://example.com/callback'
 ```
 
+## Technical Details
+
+This is a python program that handles data acquisition, preprocessing, and model developement. Here are the key steps behind this tool (main method in predict.py):
+
+1. Gets user input from the console to determine which playlists the user likes and dislikes. Subsequently gets the corresponding playlist ID's (spotify URI code) for those playlists.
+2. For the liked and disliked playlists, gets the songs in those playlists and calculates audio features for those songs (output in a dataframe). The following audio features were used:
+    * Energy
+    * Liveness
+    * Tempo
+    * Speechiness
+    * Acousticness
+    * Instrumentalness
+    * Time Signature
+    * Danceability
+    * Key
+    * Loudness
+    * Valence
+    * Mode
+    * Popularity
+    * Explicit (yes or no)
+3. Preprocess data to combined the liked and disliked audio features data sets and add in a "target" column which corresponds to the label for the dataset
+4. Separate dataset into distinct features and labels data frames
+5. Split the features and labels data frames into training and test data
+6. Train the models (Random Forest, kNN, Multilayer Perceptron, and Logistic Regression)
+
+
+
